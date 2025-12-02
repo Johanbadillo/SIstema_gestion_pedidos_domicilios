@@ -70,7 +70,43 @@ end; //
 DELIMITER ;
 
 
-select id, total_pedido(id) from pedidos;
+select id as id_pedido, fecha,tipo_pedido, total_pedido(id) as total_pedido from pedidos ORDER BY id ASC;
+
+
+
+
+-- 2. Función para calcular la ganancia neta diaria (ventas - costos de ingredientes).
+
+DELIMITER //
+CREATE FUNCTION calculo_ganancia(v_fecha_diaria date)
+RETURNS double
+deterministic
+reads sql data
+
+BEGIN
+DECLARE v_precio_venta double;
+DECLARE v_costo double;
+DECLARE v_ganancia double;
+DECLARE v_fecha_diaria date; -- Creo que es opcional 
+
+
+
+SELECT id_id
+-- sacar el costo ingredientes x pizza
+SELECT COALESCE(SUM(dp.subtotal),0) into v_costo
+from pizza pi LEFT JOIN detalle_pizza dp on pi.id=dp.id_pizza 
+GROUP BY dp.id_pizza; -- funcial pero genera un error la data esta incompleta pero al invocar una pizza sin detalle_pizza pierde el orden
+
+SELECT sum(total) 
+GROUP BY fecha -- agrupar por dia para saber el total x dia
+
+
+SELECT SUM(dp.subtotal), p.precio,SUM(dp.subtotal)-p.precio into v_costo, v_precio_venta,v_ganancia
+from detalle_pizza dp left join pizza p on dp.id_pizza=p.id GROUP BY id_pizza ;
+
+
+end; //
+DELIMITER ;
 
 
 
@@ -82,3 +118,62 @@ select id, total_pedido(id) from pedidos;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Cosas posiblemente utiles
+
+-- conseguir el total del pedido(sin domicilio aun) en base del detalle_pedido
+SELECT SUM(pi.precio)
+FROM pedidos ped LEFT JOIN detalle_pedido dp on ped.id=dp.id_pedido 
+LEFT JOIN pizza pi on dp.id_pizza=pi.id  
+WHERE ped.id= 1
+GROUP BY ped.fecha;  
