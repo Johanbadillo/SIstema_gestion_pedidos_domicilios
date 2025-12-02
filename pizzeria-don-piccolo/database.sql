@@ -70,6 +70,8 @@ CREATE TABLE pedidos (
     hora time not NULL,
     estado ENUM('pendiente', 'en preparación', 'entregado', 'cancelado') not null,
     total DOUBLE not null,
+    recibido DOUBLE not null,
+    estado_pago ENUM('abonado','pendiente','pagado') not null,
     descripcion VARCHAR(255) not null,
     tipo_pedido ENUM('local','domicilio') not null,
     FOREIGN KEY (id_cliente) REFERENCES clientes(id)
@@ -91,7 +93,6 @@ CREATE TABLE domicilio (
     id_repartidor INT not null,
     direccion VARCHAR(255) not null,
     costo_domicilio DOUBLE not null,
-    total_final DOUBLE not null,
     descripcion VARCHAR(255) not null,
     hora_salida DATETIME not null,
     hora_entrega DATETIME not null,
@@ -201,21 +202,21 @@ INSERT INTO detalle_pizza (id_ingredientes, id_pizza, cantidad, subtotal) VALUES
 (1,6,500,21250),(3,6,400,52000),(11,6,400,56000),(14,6,200,30000);
 
 -- 14 PEDIDOS
-INSERT INTO pedidos (id_cliente, fecha, hora, estado, total, descripcion, tipo_pedido) VALUES
-(1,'2025-11-01','18:30:00','entregado',68800,'Sin piña por favor','domicilio'),
-(2,'2025-11-02','19:15:00','entregado',70800,'Extra queso en ambas','local'),
-(3,'2025-11-03','20:00:00','entregado',155800,'Para fiesta de 15','domicilio'),
-(5,'2025-11-05','19:45:00','entregado',97800,'Cumpleaños infantil','domicilio'),
-(7,'2025-11-08','20:30:00','entregado',147800,'Con gaseosas incluidas','domicilio'),
-(10,'2025-11-10','19:00:00','en preparación',94800,'Urgente por favor','domicilio'),
-(12,'2025-11-12','18:20:00','entregado',127700,'Para ver fútbol','domicilio'),
-(15,'2025-11-15','13:30:00','entregado',53800,'Almuerzo familiar','local'),
-(18,'2025-11-18','20:15:00','cancelado',49900,'Cliente cambió de idea','domicilio'),
-(20,'2025-11-20','12:45:00','entregado',86800,'Dos grandes carnívoras','local'),
-(1,'2025-11-22','19:30:00','entregado',73800,'Sin cebolla','domicilio'),
-(4,'2025-11-25','18:00:00','entregado',28900,'Solo una margarita','local'),
-(6,'2025-11-28','20:45:00','entregado',107800,'Para reunión de trabajo','domicilio'),
-(9,'2025-12-01','19:10:00','entregado',127900,'Cena navideña','domicilio');
+INSERT INTO pedidos (id_cliente, fecha, hora, estado, total,recibido,estado_pago, descripcion, tipo_pedido) VALUES
+(1,'2025-11-01','18:30:00','entregado',68800,0,'abonado','Sin piña por favor','domicilio'),
+(2,'2025-11-02','19:15:00','entregado',70800,0,'abonado','Extra queso en ambas','local'),
+(3,'2025-11-03','20:00:00','entregado',155800,0,'abonado','Para fiesta de 15','domicilio'),
+(5,'2025-11-05','19:45:00','entregado',97800,0,'abonado','Cumpleaños infantil','domicilio'),
+(7,'2025-11-08','20:30:00','entregado',147800,0,'abonado','Con gaseosas incluidas','domicilio'),
+(10,'2025-11-10','19:00:00','en preparación',94800,0,'abonado','Urgente por favor','domicilio'),
+(12,'2025-11-12','18:20:00','entregado',127700,10000,'abonado','Para ver fútbol','domicilio'),
+(15,'2025-11-15','13:30:00','entregado',53800,0,'abonado','Almuerzo familiar','local'),
+(18,'2025-11-18','20:15:00','cancelado',49900,49900,'abonado','Cliente cambió de idea','domicilio'),
+(20,'2025-11-20','12:45:00','entregado',86800,49900,'abonado','Dos grandes carnívoras','local'),
+(1,'2025-11-22','19:30:00','entregado',73800,0,'abonado','Sin cebolla','domicilio'),
+(4,'2025-11-25','18:00:00','entregado',28900,0,'abonado','Solo una margarita','local'),
+(6,'2025-11-28','20:45:00','entregado',107800,0,'abonado','Para reunión de trabajo','domicilio'),
+(9,'2025-12-01','19:10:00','entregado',127900,0,'abonado','Cena navideña','domicilio');
 
 -- DETALLE DE PEDIDOS 
 INSERT INTO detalle_pedido (id_pedido, id_pizza, cantidad, subtotal) VALUES
@@ -234,14 +235,14 @@ INSERT INTO detalle_pedido (id_pedido, id_pizza, cantidad, subtotal) VALUES
 (14,6,2,99800),(14,5,1,44900),(14,3,1,25900);
 
 -- DOMICILIOS (solo los de tipo domicilio)
-INSERT INTO domicilio (id_pedido, id_repartidor, direccion, costo_domicilio, total_final, descripcion, hora_salida, hora_entrega, distancia_aproximada) VALUES
-(1,21,'Calle 45 #23-15 Florida',6000,74800,'Portería avisa','2025-11-01 18:45:00','2025-11-01 19:10:00',4.8),
-(3,22,'Carrera 33 Cabecera',8000,163800,'Edificio alto apt 802','2025-11-03 20:15:00','2025-11-03 20:50:00',7.2),
-(4,23,'Transversal 93 Girón',9000,106800,'Conjunto cerrado','2025-11-05 20:00:00','2025-11-05 20:35:00',9.1),
-(5,24,'Calle 56 Sotomayor',5000,152800,'Casa azul','2025-11-08 20:45:00','2025-11-08 21:15:00',6.3),
-(6,25,'Carrera 27 Provenza',7000,101800,'Local comercial','2025-11-10 19:15:00','2025-11-10 19:40:00',5.7),
-(7,21,'Calle 104 Florida',6500,134200,'Condominio','2025-11-12 18:35:00','2025-11-12 19:05:00',8.1),
-(11,22,'Calle 200 La Cumbre',9500,137200,'Casa grande','2025-11-22 19:45:00','2025-11-22 20:20:00',10.8);
+INSERT INTO domicilio (id_pedido, id_repartidor, direccion, costo_domicilio, descripcion, hora_salida, hora_entrega, distancia_aproximada) VALUES
+(1,21,'Calle 45 #23-15 Florida',6000,'Portería avisa','2025-11-01 18:45:00','2025-11-01 19:10:00',4.8),
+(3,22,'Carrera 33 Cabecera',8000,'Edificio alto apt 802','2025-11-03 20:15:00','2025-11-03 20:50:00',7.2),
+(4,23,'Transversal 93 Girón',9000,'Conjunto cerrado','2025-11-05 20:00:00','2025-11-05 20:35:00',9.1),
+(5,24,'Calle 56 Sotomayor',5000,'Casa azul','2025-11-08 20:45:00','2025-11-08 21:15:00',6.3),
+(6,25,'Carrera 27 Provenza',7000,'Local comercial','2025-11-10 19:15:00','2025-11-10 19:40:00',5.7),
+(7,21,'Calle 104 Florida',6500,'Condominio','2025-11-12 18:35:00','2025-11-12 19:05:00',8.1),
+(11,22,'Calle 200 La Cumbre',9500,'Casa grande','2025-11-22 19:45:00','2025-11-22 20:20:00',10.8);
 
 -- PAGOS
 INSERT INTO pago (id_pedido, metodo, descripcion) VALUES
@@ -259,8 +260,3 @@ INSERT INTO pago (id_pedido, metodo, descripcion) VALUES
 (13,'efectivo','Pagó con 150000'),
 (14,'tarjeta','Crédito');
 
--- ¡LISTO!
-SELECT '¡BASE DE DATOS COMPLETA Y REALISTA CARGADA CON ÉXITO!' AS mensaje,
-    (SELECT COUNT(*) FROM pedidos) AS total_pedidos,
-    (SELECT COUNT(*) FROM detalle_pedido) AS items_vendidos,
-    (SELECT COUNT(*) FROM persona) AS total_personas;

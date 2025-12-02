@@ -35,6 +35,7 @@ DELIMITER ;
 
 call top_pizzas;
 
+
 -- 3. Pedidos por repartidor (JOIN).
 DELIMITER //
 CREATE PROCEDURE pedidos_repartidor(in v_repartidor int)
@@ -47,7 +48,8 @@ ORDER BY nombre_completo DESC;
 END; //
 DELIMITER ;
 
-call pedidos_repartidor(id_repartidor)
+call pedidos_repartidor(id_repartidor);
+call pedidos_repartidor(21);
 
 
 -- 4. Promedio de entrega por zona (AVG y JOIN).
@@ -63,27 +65,43 @@ DELIMITER ;
 
 call promedio_zona;
 
+
 -- 5. Clientes que gastaron más de un monto (HAVING).
 DELIMITER //
 CREATE PROCEDURE clientes_vip(in v_monto_minimo double)
 begin
-SELECT concat(p.nombre,' ',p.apellido) as nombre_completo, SUM(IF(pe.tipo_pedido='local',pe.total,COALESCE(d.total_final))) as total_gastado
-FROM persona p LEFT JOIN pedidos pe on p.id=pe.id_cliente LEFT JOIN domicilio d on d.id_pedido=p.id 
+SELECT concat(p.nombre,' ',p.apellido) as nombre_completo, SUM(total) as total_gastado
+FROM persona p LEFT JOIN pedidos pe on p.id=pe.id_cliente 
 GROUP BY nombre_completo 
 HAVING total_gastado>=v_monto_minimo 
 ORDER BY total_gastado DESC;
 end; //
 DELIMITER ;
 
-call clientes_vip(monto_De_busqueda)
+call clientes_vip(monto_De_busqueda);
+call clientes_vip(100000);
 
 
+-- 6. Búsqueda por coincidencia parcial de nombre de pizza (LIKE).
+DELIMITER //
+CREATE PROCEDURE busqueda_parcial(in v_nombre_parcial VARCHAR(50))
+begin
+SELECT nombre, tipo_pizza from pizza where nombre LIKE concat('%',v_nombre_parcial,'%');
+end; //
+DELIMITER ;
+
+call busqueda_parcial('nombre para la busqueda parcial');
+call busqueda_parcial('s');
 
 
+-- 7. Subconsulta para obtener los clientes frecuentes (más de 5 pedidos mensuales).
+DELIMITER //
+CREATE PROCEDURE clientes_frecuentes()
+begin
+SELECT p.id_cliente, COUNT(*) as cantidad_pedidos, concat(pe.nombre,' ',pe.apellido) as nombre_completo 
+from pedidos p left join persona pe on p.id_cliente=pe.id 
+GROUP by p.id_cliente HAVING cantidad_pedidos>=5; 
+end; //
+DELIMITER ;
 
-
-
-
-
-
-
+call clientes_frecuentes();
