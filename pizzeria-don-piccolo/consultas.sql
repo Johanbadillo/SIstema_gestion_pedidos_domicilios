@@ -26,7 +26,7 @@ call clientes_pedidos_rango('2025-01-01','2025-12-31');
 DELIMITER //
 CREATE PROCEDURE top_pizzas()
 BEGIN
-SELECT COUNT(*) as cantidad_pizzas, MIN(pi.nombre) as nombre_pizza, MIN(pi.tipo_pizza) as tipo_pizza, sum(dp.subtotal) as total_ganado 
+SELECT COUNT(*) as cantidad_pedidos_por_pizza ,SUM(cantidad) as cantidad_pizzas, pi.nombre as nombre_pizza, pi.tipo_pizza as tipo_pizza, sum(dp.subtotal) as total_ganado 
 FROM detalle_pedido dp left join pizza pi on dp.id_pizza=pi.id 
 GROUP BY  dp.id_pizza 
 ORDER BY  cantidad_pizzas DESC;
