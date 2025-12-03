@@ -35,8 +35,8 @@ El archivo [vistas.sql](pizzeria-don-piccolo/vistas.sql) contiene el script para
 ## consultas.sql
 El archivo [consultas.sql](pizzeria-don-piccolo/consultas.sql) contiene el script para crear consultas SQL complejas utilizando procedimientos almacenados (procedures). Estas consultas permiten obtener información detallada sobre las operaciones de la pizzería, como el historial de pedidos, la eficiencia de los repartidores y las preferencias de los clientes. Actualmente, este archivo incluye varias consultas que proporcionan información valiosa para la gestión del negocio.
 
-me puedes añadir al readme la explicacion de mi mer y lo añadas
- 
+## Diagrama de la Base de Datos
+A continuación se presenta el diagrama entidad-relación (ER) de la base de datos del sistema de gestión de pedidos para la pizzería "Pizzeria Don Piccolo":
 
 ```mermaid
 ---
@@ -149,7 +149,52 @@ erDiagram
 ```
 
 
+# Explicación del Modelo Entidad-Relación (MER) - Pizzería
 
+## Entidades principales
+
+- **persona**  
+  Entidad padre que agrupa a todos los actores humanos del sistema (clientes, repartidores y trabajadores). Permite reutilizar datos comunes como nombre, apellido, documento y tipo de documento.
+
+- **clientes**, **repartidores** y **trabajadores**  
+  Heredan de `persona` mediante una relación 1 a 1 (estrategia de herencia por tabla separada). Cada uno añade sus atributos específicos.
+
+- **zona**  
+  Áreas geográficas de reparto. Cada repartidor está asignado a una única zona.
+
+- **pizza**  
+  Catálogo de pizzas con nombre, tamaño (pequeña/mediana/grande), precio base y tipo (vegetariana, especial o clásica).
+
+- **ingredientes**  
+  Materias primas utilizadas en las pizzas, con control de stock y precio unitario.
+
+- **detalle_pizza**  
+  Relación muchos a muchos entre `pizza` e `ingredientes`. Permite definir qué ingredientes lleva cada pizza, la cantidad de cada uno y el subtotal correspondiente.
+
+- **pedidos**  
+  Registro de cada pedido realizado. Incluye fecha, estado del pedido, total final, monto recibido, estado de pago, descripción y tipo de pedido (local o domicilio).
+
+- **detalle_pedido**  
+  Líneas de detalle de cada pedido: qué pizzas se pidieron, cantidad y subtotal de cada línea.
+
+- **domicilio**  
+  Información específica de los pedidos a domicilio: dirección, costo del domicilio, repartidor asignado, hora de salida, hora de entrega y distancia aproximada (en metros).
+
+- **pago**  
+  Registro de los pagos asociados a cada pedido, indicando el método (efectivo, tarjeta o app) y cualquier observación adicional.
+
+## Relaciones clave
+
+- Un **cliente** realiza muchos **pedidos** → **1:N**
+- Un **pedido** contiene muchas **pizzas** mediante `detalle_pedido` → **N:M**
+- Cada **pizza** está compuesta por varios **ingredientes** mediante `detalle_pizza` → **N:M**
+- Un **pedido** de tipo domicilio genera exactamente un registro en **domicilio** (relación 1:1 opcional)
+- Un **repartidor** puede realizar muchos **domicilios** → **1:N**
+- Cada **pedido** tiene uno o más registros en **pago** → **1:N**
+- Los **repartidores** están asignados a una **zona** → **N:1**
+
+
+¡Modelo listo para implementar en cualquier sistema de gestión de pizzerías!
 
 
 
