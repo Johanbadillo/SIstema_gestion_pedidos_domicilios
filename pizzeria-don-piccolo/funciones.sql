@@ -102,8 +102,26 @@ select calculo_ganancia('2025-11-01');
 
 
 -- 3. Procedimiento para cambiar automáticamente el estado del pedido a “entregado” cuando se registre la hora de entrega.
+DELIMITER //
+DROP procedure if EXISTS marcar_pedido_como_entregado;
+create procedure marcar_pedido_como_entregado(in v_id_pedido int)
+begin
+DECLARE v_hora_entrega DATETIME;
 
+    SELECT d.hora_entrega INTO v_hora_entrega
+    FROM domicilio d
+    WHERE d.id_pedido = v_id_pedido;
 
+if v_hora_entrega <=now() then
+    update pedidos p
+    set p.estado = 'entregado' 
+    where p.id = v_id_pedido;
+end if;
+
+end; //
+DELIMITER ;
+
+CALL marcar_pedido_como_entregado(1);
 
 
 
