@@ -109,28 +109,12 @@ CREATE TABLE pago (
     FOREIGN KEY (id_pedido) REFERENCES pedidos(id)
 );
 
------------------------------------------------------------
---                Modificaciones data                        
------------------------------------------------------------
 
-alter table ingredientes add column stock_minimo int default 30;
 
-CREATE TABLE IF NOT EXISTS historial_precios (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        id_pizza INT,
-        precio_anterior DOUBLE,
-        precio_nuevo DOUBLE,
-        fecha_cambio DATETIME);
-
------------------------------------------------------------
---                INSERSION DE DATOS                          
------------------------------------------------------------
-
--- ZONAS
 INSERT INTO zona (nombre) VALUES 
 ('Florida'), ('Girón'), ('Cabecera'), ('Sotomayor'), ('Provenza'), ('La Cumbre');
 
--- PERSONAS (30 personas reales - base para todo)
+
 INSERT INTO persona (nombre, apellido, documento, tipoDocumento) VALUES
 ('Juan José',        'Pérez Gómez',      '1037654321', 'cc'),
 ('María Camila',     'López Ruiz',       '1002345678', 'cc'),
@@ -163,18 +147,18 @@ INSERT INTO persona (nombre, apellido, documento, tipoDocumento) VALUES
 ('Sara',             'Vargas Mendoza',   '3334445567', 'cc'),
 ('Emilio',           'Ríos Castro',      '4445556678', 'cc');
 
--- CLIENTES (las primeras 20 personas son clientes)
+
 INSERT INTO clientes (id, tipoCliente) VALUES
 (1,'frecuente'),(2,'frecuente'),(3,'ocasional'),(4,'nuevo'),(5,'frecuente'),
 (6,'ocasional'),(7,'frecuente'),(8,'nuevo'),(9,'frecuente'),(10,'ocasional'),
 (11,'frecuente'),(12,'nuevo'),(13,'ocasional'),(14,'frecuente'),(15,'frecuente'),
 (16,'ocasional'),(17,'nuevo'),(18,'frecuente'),(19,'ocasional'),(20,'frecuente');
 
--- REPARTIDORES (personas 21 al 25)
+
 INSERT INTO repartidores (id, zona, estado) VALUES
 (21,1,'disponible'),(22,2,'disponible'),(23,3,'no_disponible'),(24,4,'disponible'),(25,5,'disponible');
 
--- TRABAJADORES (personas 26 al 30)
+
 INSERT INTO trabajadores (id, tipo_trabajador, fecha_ingreso) VALUES
 (26,'cajero','2023-03-15 08:00:00'),
 (27,'cocinero','2022-07-20 07:30:00'),
@@ -182,7 +166,7 @@ INSERT INTO trabajadores (id, tipo_trabajador, fecha_ingreso) VALUES
 (29,'cajero','2024-01-05 09:00:00'),
 (30,'gerente','2021-06-01 10:00:00');
 
--- PIZZAS (12 variedades)
+
 INSERT INTO pizza (nombre, tamaño, precio, tipo_pizza) VALUES
 ('Margarita',           'mediana',  28900, 'clasica'),
 ('Hawaiana',            'grande',   39900, 'clasica'),
@@ -197,7 +181,7 @@ INSERT INTO pizza (nombre, tamaño, precio, tipo_pizza) VALUES
 ('Pollo BBQ',           'mediana',  38900, 'clasica'),
 ('Hawaiana Especial',   'grande',   42900, 'clasica');
 
--- INGREDIENTES
+
 INSERT INTO ingredientes (nombre, stock, precio_unidad) VALUES
 ('Queso Mozzarella',250,8500),('Salsa Tomate',400,4200),('Pepperoni',150,13000),
 ('Jamón',120,11000),('Piña',100,6500),('Champiñones',180,7000),
@@ -205,7 +189,7 @@ INSERT INTO ingredientes (nombre, stock, precio_unidad) VALUES
 ('Pollo Desmechado',100,16000),('Carne Molida',90,14000),('Queso Cheddar',120,9000),
 ('Bacon',80,18000),('Chorizo',70,15000),('Jalapeños',60,8000);
 
--- DETALLE DE INGREDIENTES POR PIZZA
+
 INSERT INTO detalle_pizza (id_ingredientes, id_pizza, cantidad, subtotal) VALUES
 (1,1,400,17000),(2,1,200,4200),
 (1,2,500,21250),(3,2,300,39000),(4,2,300,33000),(5,2,400,26000),
@@ -214,7 +198,7 @@ INSERT INTO detalle_pizza (id_ingredientes, id_pizza, cantidad, subtotal) VALUES
 (1,5,600,25500),(12,5,300,27000),
 (1,6,500,21250),(3,6,400,52000),(11,6,400,56000),(14,6,200,30000);
 
--- 14 PEDIDOS
+
 INSERT INTO pedidos (id_cliente, fecha, hora, estado, total,recibido,estado_pago, descripcion, tipo_pedido) VALUES
 (1,'2025-11-01','18:30:00','entregado',68800,0,'abonado','Sin piña por favor','domicilio'),
 (2,'2025-11-02','19:15:00','entregado',70800,0,'abonado','Extra queso en ambas','local'),
@@ -231,7 +215,7 @@ INSERT INTO pedidos (id_cliente, fecha, hora, estado, total,recibido,estado_pago
 (6,'2025-11-28','20:45:00','entregado',107800,0,'abonado','Para reunión de trabajo','domicilio'),
 (9,'2025-12-01','19:10:00','entregado',127900,0,'abonado','Cena navideña','domicilio');
 
--- DETALLE DE PEDIDOS 
+
 INSERT INTO detalle_pedido (id_pedido, id_pizza, cantidad, subtotal) VALUES
 (1,2,1,39900),(1,1,1,28900),
 (2,5,1,44900),(2,6,1,49900),
@@ -247,7 +231,7 @@ INSERT INTO detalle_pedido (id_pedido, id_pizza, cantidad, subtotal) VALUES
 (13,6,1,49900),(13,10,1,47900),(13,2,1,39900),
 (14,6,2,99800),(14,5,1,44900),(14,3,1,25900);
 
--- DOMICILIOS (solo los de tipo domicilio)
+
 INSERT INTO domicilio (id_pedido, id_repartidor, direccion, costo_domicilio, descripcion, hora_salida, hora_entrega, distancia_aproximada) VALUES
 (1,21,'Calle 45 #23-15 Florida',6000,'Portería avisa','2025-11-01 18:45:00','2025-11-01 19:10:00',4.8),
 (3,22,'Carrera 33 Cabecera',8000,'Edificio alto apt 802','2025-11-03 20:15:00','2025-11-03 20:50:00',7.2),
@@ -257,7 +241,7 @@ INSERT INTO domicilio (id_pedido, id_repartidor, direccion, costo_domicilio, des
 (7,21,'Calle 104 Florida',6500,'Condominio','2025-11-12 18:35:00','2025-11-12 19:05:00',8.1),
 (11,22,'Calle 200 La Cumbre',9500,'Casa grande','2025-11-22 19:45:00','2025-11-22 20:20:00',10.8);
 
--- PAGOS
+
 INSERT INTO pago (id_pedido, metodo, descripcion) VALUES
 (1,'efectivo','Pagó con 80000, devuelta 5200'),
 (2,'tarjeta','Débito Bancolombia'),
@@ -273,3 +257,14 @@ INSERT INTO pago (id_pedido, metodo, descripcion) VALUES
 (13,'efectivo','Pagó con 150000'),
 (14,'tarjeta','Crédito');
 
+
+
+
+alter table ingredientes add column stock_minimo int default 30;
+
+CREATE TABLE IF NOT EXISTS historial_precios (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        id_pizza INT,
+        precio_anterior DOUBLE,
+        precio_nuevo DOUBLE,
+        fecha_cambio DATETIME);
